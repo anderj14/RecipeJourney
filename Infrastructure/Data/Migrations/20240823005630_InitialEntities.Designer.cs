@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(RecipeJourneyContext))]
-    [Migration("20240822202848_InitialEntities")]
+    [Migration("20240823005630_InitialEntities")]
     partial class InitialEntities
     {
         /// <inheritdoc />
@@ -26,8 +26,9 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("CategoryName")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -279,13 +280,13 @@ namespace Infrastructure.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "3623cc17-0b5e-4de9-942b-ce5f0ff51af2",
+                            Id = "40b5be29-fb8a-413f-8fa9-b72bf6bd21a1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "a3d4d729-c3eb-4f45-91ca-165cbf8a7714",
+                            Id = "616173c3-8d99-4f92-8ac0-eb7958bc7a9f",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         });

@@ -9,17 +9,17 @@ namespace Infrastructure.Data
 {
     public class RecipeJourneyContext : IdentityDbContext<AppUser>
     {
-        public RecipeJourneyContext(DbContextOptions options) : base(options)
+        public RecipeJourneyContext(DbContextOptions<RecipeJourneyContext> options) : base(options)
         {
         }
 
-        DbSet<Category> Categories { get; set; }
-        DbSet<Comment> Comments { get; set; }
-        DbSet<UserFavoriteRecipe> UserFavoriteRecipes { get; set; }
-        DbSet<Ingredient> Ingredients { get; set; }
-        DbSet<Instruction> Instructions { get; set; }
-        DbSet<Recipe> Recipes { get; set; }
-        DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<UserFavoriteRecipe> UserFavoriteRecipes { get; set; }
+        public DbSet<Ingredient> Ingredients { get; set; }
+        public DbSet<Instruction> Instructions { get; set; }
+        public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<AppUser> AppUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

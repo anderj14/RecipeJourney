@@ -1,5 +1,7 @@
 
+using Core.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Data.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Extensions
@@ -14,6 +16,12 @@ namespace API.Extensions
             {
                 opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
             });
+            
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            // services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
 
             return services;
         }

@@ -60,7 +60,7 @@ namespace Infrastructure.Data.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    CategoryName = table.Column<int>(type: "INTEGER", nullable: false)
+                    CategoryName = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -302,8 +302,8 @@ namespace Infrastructure.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "3623cc17-0b5e-4de9-942b-ce5f0ff51af2", null, "Admin", "ADMIN" },
-                    { "a3d4d729-c3eb-4f45-91ca-165cbf8a7714", null, "Member", "MEMBER" }
+                    { "40b5be29-fb8a-413f-8fa9-b72bf6bd21a1", null, "Admin", "ADMIN" },
+                    { "616173c3-8d99-4f92-8ac0-eb7958bc7a9f", null, "Member", "MEMBER" }
                 });
 
             migrationBuilder.CreateIndex(
