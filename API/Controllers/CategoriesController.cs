@@ -1,5 +1,6 @@
 
 using API.Dtos.CreateDtos;
+using API.Errors;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
@@ -27,11 +28,13 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Category>> GetCategory(int id)
         {
             var category = await _categoryRepo.GetByIdAsync(id);
 
-            if (category == null) return NotFound();
+            if (category == null) return NotFound(new ApiResponse(404, useSeriousMessages: false));
 
             return Ok(category);
         }
@@ -40,7 +43,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateCategory([FromBody] CreateCategoryDto createCategoryDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(new ApiResponse(400, "Invalid model state"));
 
             try
             {
@@ -56,16 +59,17 @@ namespace API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCategory(int id, CreateCategoryDto updateCategoryDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(new ApiResponse(400, "Invalid model state"));
 
             try
             {
                 var categorySearched = await _categoryRepo.GetByIdAsync(id);
 
-                if (categorySearched == null) return NotFound("Category not found");
+                if (categorySearched == null) return NotFound(new ApiResponse(404, useSeriousMessages: false));
 
                 _mapper.Map(updateCategoryDto, categorySearched);
 
@@ -84,13 +88,11 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategory(int id)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
             try
             {
                 var categorySearched = await _categoryRepo.GetByIdAsync(id);
 
-                if (categorySearched == null) return NotFound("Category not found");
+                if (categorySearched == null) return NotFound(new ApiResponse(404, useSeriousMessages: false));
 
                 _categoryRepo.Delete(categorySearched);
                 _categoryRepo.SaveAsync();
