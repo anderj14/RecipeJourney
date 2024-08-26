@@ -211,8 +211,9 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("PictureUrl")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("PreparationTime")
                         .HasColumnType("INTEGER");
@@ -277,13 +278,13 @@ namespace Infrastructure.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "40b5be29-fb8a-413f-8fa9-b72bf6bd21a1",
+                            Id = "1c899d50-25b7-40e1-b403-f47d33dd0810",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "616173c3-8d99-4f92-8ac0-eb7958bc7a9f",
+                            Id = "cf6e0f84-85da-4523-be78-b3f46087dab9",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         });

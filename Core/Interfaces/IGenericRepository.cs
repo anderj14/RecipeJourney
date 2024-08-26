@@ -15,6 +15,6 @@ namespace Core.Interfaces
         void Update(T entity);
         void Delete(T entity);
 
-        void SaveAsync();
+        Task SaveAsync();
     }
 }

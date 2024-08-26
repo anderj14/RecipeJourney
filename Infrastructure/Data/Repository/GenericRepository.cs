@@ -20,7 +20,7 @@ namespace Infrastructure.Data.Repository
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task<T> GetEntityWithSpecAsync(ISpecification<T> spec)
+        public async Task<T?> GetEntityWithSpecAsync(ISpecification<T> spec)
         {
             return await ApplySpecification(spec).FirstOrDefaultAsync();
         }
@@ -56,9 +56,9 @@ namespace Infrastructure.Data.Repository
             _context.Set<T>().Remove(entity);
         }
 
-        public void SaveAsync()
+        public async Task SaveAsync()
         {
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> specification)

@@ -185,7 +185,7 @@ namespace Infrastructure.Data.Migrations
                     PreparationTime = table.Column<int>(type: "INTEGER", nullable: false),
                     CookingTime = table.Column<int>(type: "INTEGER", nullable: false),
                     DifficultyLevel = table.Column<string>(type: "TEXT", nullable: false),
-                    PictureUrl = table.Column<int>(type: "INTEGER", nullable: false),
+                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
                     CategoryId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -302,8 +302,8 @@ namespace Infrastructure.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "40b5be29-fb8a-413f-8fa9-b72bf6bd21a1", null, "Admin", "ADMIN" },
-                    { "616173c3-8d99-4f92-8ac0-eb7958bc7a9f", null, "Member", "MEMBER" }
+                    { "1c899d50-25b7-40e1-b403-f47d33dd0810", null, "Admin", "ADMIN" },
+                    { "cf6e0f84-85da-4523-be78-b3f46087dab9", null, "Member", "MEMBER" }
                 });
 
             migrationBuilder.CreateIndex(

@@ -9,7 +9,7 @@ namespace Core.Entities
         public int PreparationTime { get; set; }
         public int CookingTime { get; set; }
         public string DifficultyLevel { get; set; }
-        public int PictureUrl { get; set; }
+        public string PictureUrl { get; set; }
 
         public int CategoryId { get; set; }
         public Category Category { get; set; }
@@ -17,7 +17,6 @@ namespace Core.Entities
         public ICollection<Ingredient> Ingredients { get; set; }
         public ICollection<Instruction> Instructions { get; set; }
         public ICollection<Comment> Comments { get; set; }
-
         public ICollection<UserFavoriteRecipe> UserFavoriteRecipes { get; set; }
     }
 }

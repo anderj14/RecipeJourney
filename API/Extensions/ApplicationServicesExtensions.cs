@@ -16,7 +16,7 @@ namespace API.Extensions
         {
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-            
+
             services.AddDbContext<RecipeJourneyContext>(opt =>
             {
                 opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
@@ -44,7 +44,6 @@ namespace API.Extensions
                     return new BadRequestObjectResult(errorResponse);
                 };
             });
-
 
             return services;
         }
