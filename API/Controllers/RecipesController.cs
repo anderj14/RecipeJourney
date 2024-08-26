@@ -16,42 +16,52 @@ namespace API.Controllers
     {
         private readonly IGenericRepository<Recipe> _recipeRepo;
         private readonly IGenericRepository<Ingredient> _ingredientRepo;
+        private readonly IGenericRepository<Instruction> _instructionRepo;
         private readonly IMapper _mapper;
 
-        public RecipesController(IGenericRepository<Recipe> recipeRepo, IMapper mapper, IGenericRepository<Ingredient> ingredientRepo)
+        public RecipesController(IGenericRepository<Recipe> recipeRepo, IGenericRepository<Ingredient> ingredientRepo, IGenericRepository<Instruction> instructionRepo, IMapper mapper)
         {
             _recipeRepo = recipeRepo;
-            _mapper = mapper;
             _ingredientRepo = ingredientRepo;
+            _instructionRepo = instructionRepo;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<PagedList<RecipeDto>>> GetRecipes([FromQuery] RecipeSpecParams recipeSpecParams)
         {
-            var spec = new RecipeSpecification(recipeSpecParams);
-            var countSpec = new RecipeFilterForCountSpecification(recipeSpecParams);
-
-            var totalItems = await _recipeRepo.CountAsync(countSpec);
-
-            if (totalItems == 0)
+            try
             {
-                return Ok(new PagedList<RecipeDto>(new List<RecipeDto>(), 0, recipeSpecParams.PageIndex, recipeSpecParams.PageSize));
+                var spec = new RecipeSpecification(recipeSpecParams);
+                var countSpec = new RecipeFilterForCountSpecification(recipeSpecParams);
+
+                var totalItems = await _recipeRepo.CountAsync(countSpec);
+
+                if (totalItems == 0)
+                {
+                    return Ok(new PagedList<RecipeDto>(new List<RecipeDto>(), 0, recipeSpecParams.PageIndex, recipeSpecParams.PageSize));
+                }
+
+                var recipes = await _recipeRepo.ListWithSpecAsync(spec);
+
+                var data = _mapper.Map<IReadOnlyList<RecipeDto>>(recipes);
+
+                var paginatedRecipe = new PagedList<RecipeDto>(
+                    data.ToList(),
+                    totalItems,
+                    recipeSpecParams.PageIndex,
+                    recipeSpecParams.PageSize
+                );
+
+                Response.AddPaginationHeader(paginatedRecipe.MetaData);
+
+                return Ok(paginatedRecipe);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
-            var recipes = await _recipeRepo.ListWithSpecAsync(spec);
-
-            var data = _mapper.Map<IReadOnlyList<RecipeDto>>(recipes);
-
-            var paginatedRecipe = new PagedList<RecipeDto>(
-                data.ToList(),
-                totalItems,
-                recipeSpecParams.PageIndex,
-                recipeSpecParams.PageSize
-            );
-
-            Response.AddPaginationHeader(paginatedRecipe.Metadata);
-
-            return Ok(paginatedRecipe);
         }
 
         [HttpGet("{id}")]
@@ -62,14 +72,14 @@ namespace API.Controllers
             var spec = new RecipeSpecification(id);
             var recipe = await _recipeRepo.GetEntityWithSpecAsync(spec);
 
-            if (recipe == null) return NotFound(new ApiResponse(404, "Invalid Model"));
+            if (recipe == null) return NotFound(new ApiResponse(404, "Recipe Not Found!"));
 
             var data = _mapper.Map<RecipeDto>(recipe);
 
             return Ok(data);
         }
 
-        [HttpGet("{recipeId}/Ingredients")]
+        [HttpGet("{recipeId}/ingredients")]
         public async Task<ActionResult<IngredientDto>> GetIngredientsByRecipeId(int recipeId)
         {
             var recipeSpec = new RecipeSpecification(recipeId);
@@ -81,6 +91,22 @@ namespace API.Controllers
             var ingredients = await _ingredientRepo.ListWithSpecAsync(spec);
 
             var data = _mapper.Map<IReadOnlyList<IngredientDto>>(ingredients);
+
+            return Ok(data);
+        }
+
+        [HttpGet("{recipeId}/instructions")]
+        public async Task<ActionResult<InstructionDto>> GetInstructionByRecipeId(int recipeId)
+        {
+            var recipeSpec = new RecipeSpecification(recipeId);
+            var recipe = await _recipeRepo.GetEntityWithSpecAsync(recipeSpec);
+
+            if (recipe == null) return NotFound(new ApiResponse(404, "Recipe Not Found!"));
+
+            var spec = new InstructionSpecification(recipeId, getByRecipeId: true);
+            var instructions = await _instructionRepo.ListWithSpecAsync(spec);
+
+            var data = _mapper.Map<IReadOnlyList<InstructionDto>>(instructions);
 
             return Ok(data);
         }

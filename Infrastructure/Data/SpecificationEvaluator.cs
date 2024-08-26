@@ -6,18 +6,37 @@ namespace Infrastructure.Data
 {
     public class SpecificationEvaluator<T> where T : BaseEntity
     {
-        public static IQueryable<T> GetQuery(IQueryable<T> inputQuery, ISpecification<T> specification)
+        public static IQueryable<T> GetQuery(IQueryable<T> inputQuery, ISpecification<T> spec)
         {
             var query = inputQuery;
 
-            if (specification.Criteria != null) query = query.Where(specification.Criteria);
-            if (specification.OrderBy != null) query = query.OrderBy(specification.OrderBy);
-            if (specification.OrderByDescending != null) query = query.OrderByDescending(specification.OrderByDescending);
-            if (specification.IsPagingEnabled) query = query.Skip(specification.Skip).Take(specification.Take);
+            // Apply criteria (Where clause)
+            if (spec.Criteria != null)
+            {
+                query = query.Where(spec.Criteria);
+            }
 
-            query = specification.Includes.Aggregate(query, (current, include) => current.Include(include));
+            // Apply ordering
+            if (spec.OrderBy != null)
+            {
+                query = query.OrderBy(spec.OrderBy);
+            }
+            else if (spec.OrderByDescending != null)
+            {
+                query = query.OrderByDescending(spec.OrderByDescending);
+            }
+
+            // Apply paging if enabled
+            if (spec.IsPagingEnabled)
+            {
+                query = query.Skip(spec.Skip).Take(spec.Take);
+            }
+
+            // Apply includes
+            query = spec.Includes.Aggregate(query, (current, include) => current.Include(include));
 
             return query;
         }
+
     }
 }

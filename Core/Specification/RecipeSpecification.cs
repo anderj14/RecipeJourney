@@ -6,28 +6,32 @@ namespace Core.Specification
     public class RecipeSpecification : BaseSpecification<Recipe>
     {
         public RecipeSpecification(RecipeSpecParams recipeSpecParams)
-        : base(x =>
-            (string.IsNullOrEmpty(recipeSpecParams.Search) || x.Title.ToLower().Contains(recipeSpecParams.Search.ToLower()))
-            && (recipeSpecParams.CategoryId.HasValue || x.CategoryId == recipeSpecParams.CategoryId)
-        )
+            : base(x =>
+                (string.IsNullOrEmpty(recipeSpecParams.Search) || x.Title.ToLower()
+                .Contains(recipeSpecParams.Search.ToLower())) &&
+                (!recipeSpecParams.CategoryId.HasValue || x.CategoryId == recipeSpecParams.CategoryId)
+            )
         {
             AddCommonIncludes();
-            AddOrderBy(r => r.Title);
             ApplySorting(recipeSpecParams.Sort);
+
+            // Add Paging support
+            ApplyPaging(recipeSpecParams.PageSize * (recipeSpecParams.PageIndex - 1),
+                        recipeSpecParams.PageSize);
         }
 
         public RecipeSpecification(int id)
-        : base(r => r.Id == id)
+            : base(r => r.Id == id)
         {
             AddCommonIncludes();
         }
 
         private void AddCommonIncludes()
         {
-            AddIncludes(r => r.Category);
-            AddIncludes(r => r.Ingredients);
-            AddIncludes(r => r.Instructions);
-            AddIncludes(r => r.Comments);
+            AddInclude(r => r.Category);
+            AddInclude(r => r.Ingredients);
+            AddInclude(r => r.Instructions);
+            AddInclude(r => r.Comments);
         }
 
         private void ApplySorting(string sort)
@@ -48,12 +52,16 @@ namespace Core.Specification
                     case "cookingTimeDesc":
                         AddOrderByDescending(r => r.CookingTime);
                         break;
-
                     default:
                         AddOrderBy(r => r.Title);
                         break;
                 }
             }
+            else
+            {
+                AddOrderBy(r => r.Title);
+            }
         }
     }
+
 }

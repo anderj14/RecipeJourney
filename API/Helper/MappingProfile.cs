@@ -11,10 +11,7 @@ namespace API.Helper
         public MappingProfile()
         {
             CreateMap<Recipe, RecipeDto>()
-            .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category.CategoryName))
-            .ForMember(d => d.Ingredients, o => o.MapFrom(s => s.Ingredients))
-            .ForMember(d => d.Instructions, o => o.MapFrom(s => s.Instructions))
-            .ForMember(d => d.Comments, o => o.MapFrom(s => s.Comments));
+            .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category.CategoryName));
             CreateMap<Ingredient, IngredientDto>();
             CreateMap<Instruction, InstructionDto>();
             CreateMap<Comment, CommentDto>();
@@ -22,6 +19,7 @@ namespace API.Helper
             CreateMap<CreateCategoryDto, Category>();
             CreateMap<CreateRecipeDto, Recipe>();
             CreateMap<CreateIngredientDto, Ingredient>();
+            CreateMap<CreateInstructionDto, Instruction>();
         }
     }
 }

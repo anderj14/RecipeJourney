@@ -8,7 +8,10 @@ namespace Core.Specification
         {
         }
 
-        public BaseSpecification(Expression<Func<T, bool>> criteria) => Criteria = criteria;
+        public BaseSpecification(Expression<Func<T, bool>> criteria)
+        {
+            Criteria = criteria;
+        }
 
         public Expression<Func<T, bool>> Criteria { get; }
 
@@ -24,24 +27,27 @@ namespace Core.Specification
 
         public bool IsPagingEnabled { get; private set; }
 
-        protected void AddIncludes(Expression<Func<T, object>> include)
+        protected void AddInclude(Expression<Func<T, object>> includeExpression)
         {
-            Includes.Add(include);
+            Includes.Add(includeExpression);
         }
 
-        protected void AddOrderBy(Expression<Func<T, object>> orderBy)
+        protected void AddOrderBy(Expression<Func<T, object>> orderByExpression)
         {
-            OrderBy = orderBy;
+            OrderBy = orderByExpression;
         }
 
-        protected void AddOrderByDescending(Expression<Func<T, object>> orderByDescending)
+        protected void AddOrderByDescending(Expression<Func<T, object>> orderByDescExpression)
         {
-            OrderByDescending = orderByDescending;
+            OrderByDescending = orderByDescExpression;
         }
 
         protected void ApplyPaging(int skip, int take)
         {
-            if (skip <= 0 || take <= 0) throw new ArgumentException("Skip and Take values must be non-negative and Take must be greater than zero.");
+            if (skip < 0 || take <= 0)
+            {
+                throw new ArgumentException("Skip and Take values must be non-negative and Take must be greater than zero.");
+            }
 
             Skip = skip;
             Take = take;
