@@ -21,6 +21,7 @@ namespace API.Helper
 
             CreateMap<CreateCategoryDto, Category>();
             CreateMap<CreateRecipeDto, Recipe>();
+            CreateMap<CreateIngredientDto, Ingredient>();
         }
     }
 }

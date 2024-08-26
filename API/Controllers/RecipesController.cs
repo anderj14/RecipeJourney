@@ -15,12 +15,14 @@ namespace API.Controllers
     public class RecipesController : BaseApiController
     {
         private readonly IGenericRepository<Recipe> _recipeRepo;
+        private readonly IGenericRepository<Ingredient> _ingredientRepo;
         private readonly IMapper _mapper;
 
-        public RecipesController(IGenericRepository<Recipe> recipeRepo, IMapper mapper)
+        public RecipesController(IGenericRepository<Recipe> recipeRepo, IMapper mapper, IGenericRepository<Ingredient> ingredientRepo)
         {
             _recipeRepo = recipeRepo;
             _mapper = mapper;
+            _ingredientRepo = ingredientRepo;
         }
 
         [HttpGet]
@@ -63,6 +65,22 @@ namespace API.Controllers
             if (recipe == null) return NotFound(new ApiResponse(404, "Invalid Model"));
 
             var data = _mapper.Map<RecipeDto>(recipe);
+
+            return Ok(data);
+        }
+
+        [HttpGet("{recipeId}/Ingredients")]
+        public async Task<ActionResult<IngredientDto>> GetIngredientsByRecipeId(int recipeId)
+        {
+            var recipeSpec = new RecipeSpecification(recipeId);
+            var recipe = await _recipeRepo.GetEntityWithSpecAsync(recipeSpec);
+
+            if (recipe == null) return NotFound(new ApiResponse(404, "Recipe Not Found!"));
+
+            var spec = new IngredientSpecification(recipeId, getByRecipeId: true);
+            var ingredients = await _ingredientRepo.ListWithSpecAsync(spec);
+
+            var data = _mapper.Map<IReadOnlyList<IngredientDto>>(ingredients);
 
             return Ok(data);
         }
