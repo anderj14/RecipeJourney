@@ -3,6 +3,7 @@ using API.Dtos;
 using API.Dtos.CreateDtos;
 using AutoMapper;
 using Core.Entities;
+using Core.Entities.Identity;
 
 namespace API.Helper
 {
@@ -15,6 +16,7 @@ namespace API.Helper
             CreateMap<Ingredient, IngredientDto>();
             CreateMap<Instruction, InstructionDto>();
             CreateMap<Comment, CommentDto>();
+            CreateMap<AppUser, UserDto>();
 
             CreateMap<CreateCategoryDto, Category>();
             CreateMap<CreateRecipeDto, Recipe>();

@@ -19,9 +19,6 @@ namespace API.Extensions
             this IServiceCollection services, IConfiguration config
         )
         {
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
-
             services.AddDbContext<RecipeJourneyContext>(opt =>
             {
                 opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
@@ -29,37 +26,16 @@ namespace API.Extensions
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            // services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddScoped<ITokenService, TokenService>();
-
-            services.Configure<ApiBehaviorOptions>(opt =>
-            {
-                opt.InvalidModelStateResponseFactory = ActionContext =>
-                {
-                    var errors = ActionContext.ModelState
-                    .Where(e => e.Value.Errors.Count > 0)
-                    .SelectMany(x => x.Value.Errors)
-                    .Select(x => x.ErrorMessage).ToArray();
-
-                    var errorResponse = new ApiValidationErrorResponse
-                    {
-                        Errors = errors
-                    };
-
-                    return new BadRequestObjectResult(errorResponse);
-                };
-            });
-
-            services.AddIdentity<AppUser, IdentityUser>(opt =>
+            services.AddIdentity<AppUser, IdentityRole>(opt =>
             {
                 opt.User.RequireUniqueEmail = true;
                 opt.Password.RequireDigit = true;
-                opt.Password.RequiredLength = 8;
                 opt.Password.RequireLowercase = true;
                 opt.Password.RequireUppercase = true;
                 opt.Password.RequireNonAlphanumeric = true;
-            }).AddEntityFrameworkStores<RecipeJourneyContext>();
+                opt.Password.RequiredLength = 8;
+            })
+            .AddEntityFrameworkStores<RecipeJourneyContext>();
 
             services.AddAuthentication(opt =>
             {
@@ -81,6 +57,27 @@ namespace API.Extensions
                     IssuerSigningKey = new SymmetricSecurityKey(
                         System.Text.Encoding.UTF8.GetBytes(config["Token:Key"])
                     )
+                };
+            });
+
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<ITokenService, TokenService>();
+
+            services.Configure<ApiBehaviorOptions>(opt =>
+            {
+                opt.InvalidModelStateResponseFactory = ActionContext =>
+                {
+                    var errors = ActionContext.ModelState
+                    .Where(e => e.Value.Errors.Count > 0)
+                    .SelectMany(x => x.Value.Errors)
+                    .Select(x => x.ErrorMessage).ToArray();
+
+                    var errorResponse = new ApiValidationErrorResponse
+                    {
+                        Errors = errors
+                    };
+
+                    return new BadRequestObjectResult(errorResponse);
                 };
             });
 

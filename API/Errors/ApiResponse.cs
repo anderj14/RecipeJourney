@@ -19,7 +19,7 @@ namespace API.Errors
                 return statusCode switch
                 {
                     400 => "Bad request. Please check your input.",
-                    401 => "Authorized access. Please authenticate.",
+                    401 => "Unauthorized access. Please authenticate.",
                     404 => "Resource not found.",
                     500 => "Internal server error. Please try again later.",
                     _ => "An unexpected error occurred."
@@ -30,7 +30,7 @@ namespace API.Errors
                 return statusCode switch
                 {
                     400 => "A bad request, you have made",
-                    401 => "Authorized, are you not",
+                    401 => "Unauthorized, are you not",
                     404 => "Resource found, it was not",
                     500 => "Error are the path to the dark side.  Error lead to anger. Anger leads to hate. Hate leads to career change",
                     _ => "An unexpected error occurred."

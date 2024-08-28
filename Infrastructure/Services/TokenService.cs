@@ -23,15 +23,15 @@ namespace Infrastructure.Services
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
         }
 
-        public async Task<string> CreateToken(AppUser appUser)
+        public async Task<string> CreateTokenAsync(AppUser user)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, appUser.Email),
-                new Claim(ClaimTypes.Name, appUser.UserName)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.UserName),
             };
 
-            var roles = await _userManager.GetRolesAsync(appUser);
+            var roles = await _userManager.GetRolesAsync(user);
             var uniquedRoles = roles.Distinct();
 
             foreach (var role in uniquedRoles)
@@ -44,7 +44,7 @@ namespace Infrastructure.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(7),
+                Expires = DateTime.Now.AddDays(14),
                 SigningCredentials = creds,
                 Issuer = _config["Token:Issuer"],
                 Audience = _config["Token:Audience"],

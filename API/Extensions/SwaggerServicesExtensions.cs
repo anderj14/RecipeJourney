@@ -1,9 +1,8 @@
-
 using Microsoft.OpenApi.Models;
 
 namespace API.Extensions
 {
-    public static class SwaggerServicesExtensions
+    public static class SwaggerServiceExtensions
     {
         public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
         {
