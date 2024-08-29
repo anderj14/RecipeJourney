@@ -56,7 +56,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("RecipeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -278,13 +279,13 @@ namespace Infrastructure.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1c899d50-25b7-40e1-b403-f47d33dd0810",
+                            Id = "b00e67de-5c05-41f6-8d43-e76a01b1b22a",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "cf6e0f84-85da-4523-be78-b3f46087dab9",
+                            Id = "4860636d-8a75-4529-90da-56c43af770c7",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         });

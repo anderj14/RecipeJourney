@@ -21,6 +21,8 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IngredientDto>> GetIngredient(int id)
         {
             var ingredient = await _ingredientRepo.GetByIdAsync(id);
@@ -39,8 +41,7 @@ namespace API.Controllers
                 return BadRequest(new ApiResponse(400, "Invalid data"));
 
             var newIngredient = _mapper.Map<CreateIngredientDto, Ingredient>(createIngredientDto);
-            _ingredientRepo.Create(newIngredient);
-            await _ingredientRepo.SaveAsync();
+            await _ingredientRepo.Create(newIngredient);
 
             var data = _mapper.Map<IngredientDto>(newIngredient);
 
@@ -61,8 +62,7 @@ namespace API.Controllers
 
                 _mapper.Map(updateIngredientDto, existingIngredient);
 
-                _ingredientRepo.Update(existingIngredient);
-                await _ingredientRepo.SaveAsync();
+                await _ingredientRepo.Update(existingIngredient);
 
                 var data = _mapper.Map<IngredientDto>(existingIngredient);
 
@@ -86,8 +86,7 @@ namespace API.Controllers
 
                 if (existingIngredient == null) return NotFound(new ApiResponse(404, "Ingredient Not Found"));
 
-                _ingredientRepo.Delete(existingIngredient);
-                await _ingredientRepo.SaveAsync();
+                await _ingredientRepo.Delete(existingIngredient);
 
                 return NoContent();
             }

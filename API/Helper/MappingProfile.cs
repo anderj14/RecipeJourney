@@ -15,13 +15,17 @@ namespace API.Helper
             .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category.CategoryName));
             CreateMap<Ingredient, IngredientDto>();
             CreateMap<Instruction, InstructionDto>();
-            CreateMap<Comment, CommentDto>();
+            CreateMap<Comment, CommentDto>()
+            .ForMember(d => d.UserName, o => o.MapFrom(s => s.AppUser));
             CreateMap<AppUser, UserDto>();
+            CreateMap<UserFavoriteRecipe, UserFavoriteRecipeDto>();
 
             CreateMap<CreateCategoryDto, Category>();
             CreateMap<CreateRecipeDto, Recipe>();
             CreateMap<CreateIngredientDto, Ingredient>();
             CreateMap<CreateInstructionDto, Instruction>();
+            CreateMap<CreateCommentDto, Comment>();
+            CreateMap<CreateUserFavoriteRecipeDto, UserFavoriteRecipe>();
         }
     }
 }

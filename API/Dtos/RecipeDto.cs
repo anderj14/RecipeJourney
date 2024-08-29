@@ -13,9 +13,5 @@ namespace API.Dtos
         public string DifficultyLevel { get; set; }
         public string PictureUrl { get; set; }
         public string CategoryName { get; set; }
-
-        public ICollection<IngredientDto> Ingredients { get; set; }
-        public ICollection<InstructionDto> Instructions { get; set; }
-        public ICollection<CommentDto> Comments { get; set; }
     }
 }

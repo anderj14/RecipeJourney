@@ -20,6 +20,8 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<InstructionDto>> GetInstruction(int id)
         {
             var ingredient = await _instructionRepo.GetByIdAsync(id);
@@ -40,8 +42,7 @@ namespace API.Controllers
 
             var newInstruction = _mapper.Map<CreateInstructionDto, Instruction>(createInstructionDto);
 
-            _instructionRepo.Create(newInstruction);
-            await _instructionRepo.SaveAsync();
+            await _instructionRepo.Create(newInstruction);
 
             var data = _mapper.Map<InstructionDto>(newInstruction);
 
@@ -62,8 +63,7 @@ namespace API.Controllers
 
                 _mapper.Map(updateInstructionDto, existingInstruction);
 
-                _instructionRepo.Update(existingInstruction);
-                await _instructionRepo.SaveAsync();
+                await _instructionRepo.Update(existingInstruction);
 
                 var data = _mapper.Map<InstructionDto>(existingInstruction);
 
@@ -87,8 +87,7 @@ namespace API.Controllers
 
                 if (existingInstruction == null) return NotFound(new ApiResponse(404, "Instruction Not Found"));
 
-                _instructionRepo.Delete(existingInstruction);
-                await _instructionRepo.SaveAsync();
+                await _instructionRepo.Delete(existingInstruction);
 
                 return NoContent();
             }

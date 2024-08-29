@@ -49,8 +49,7 @@ namespace API.Controllers
             {
                 var categoryCreate = _mapper.Map<Category>(createCategoryDto);
 
-                _categoryRepo.Create(categoryCreate);
-                _categoryRepo.SaveAsync();
+                await _categoryRepo.Create(categoryCreate);
 
                 return CreatedAtAction(nameof(GetCategory), new { id = categoryCreate.Id }, categoryCreate);
             }
@@ -74,8 +73,7 @@ namespace API.Controllers
                 _mapper.Map(updateCategoryDto, categorySearched);
 
 
-                _categoryRepo.Update(categorySearched);
-                _categoryRepo.SaveAsync();
+                await _categoryRepo.Update(categorySearched);
 
                 return Ok(categorySearched);
             }
@@ -94,8 +92,7 @@ namespace API.Controllers
 
                 if (categorySearched == null) return NotFound(new ApiResponse(404, useSeriousMessages: false));
 
-                _categoryRepo.Delete(categorySearched);
-                _categoryRepo.SaveAsync();
+                await _categoryRepo.Delete(categorySearched);
 
                 return NoContent();
             }

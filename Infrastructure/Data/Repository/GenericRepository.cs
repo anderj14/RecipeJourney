@@ -1,4 +1,5 @@
 
+using System.Linq.Expressions;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specification;
@@ -35,25 +36,38 @@ namespace Infrastructure.Data.Repository
             return await ApplySpecification(spec).ToListAsync();
         }
 
+        public async Task<IReadOnlyList<T>> ListByConditionAsync(Expression<Func<T, bool>> predicate = null)
+        {
+            if (predicate == null)
+            {
+                return await ListAllAsync();
+            }
+
+            return await _context.Set<T>().Where(predicate).ToListAsync();
+        }
+
         public async Task<int> CountAsync(ISpecification<T> spec)
         {
             return await ApplySpecification(spec).CountAsync();
         }
 
-        public void Create(T entity)
+        public async Task Create(T entity)
         {
             _context.Set<T>().Add(entity);
+            await SaveAsync();
         }
 
-        public void Update(T entity)
+        public async Task Update(T entity)
         {
             _context.Set<T>().Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
+            await SaveAsync();
         }
 
-        public void Delete(T entity)
+        public async Task Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
+            await SaveAsync();
         }
 
         public async Task SaveAsync()

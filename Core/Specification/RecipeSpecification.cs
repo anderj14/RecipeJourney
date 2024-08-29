@@ -29,9 +29,6 @@ namespace Core.Specification
         private void AddCommonIncludes()
         {
             AddInclude(r => r.Category);
-            AddInclude(r => r.Ingredients);
-            AddInclude(r => r.Instructions);
-            AddInclude(r => r.Comments);
         }
 
         private void ApplySorting(string sort)

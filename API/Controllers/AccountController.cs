@@ -1,24 +1,31 @@
 
+using System.Security.Claims;
 using API.Dtos;
 using API.Errors;
 using API.Extensions;
+using API.Helper;
+using AutoMapper;
 using Core.Entities.Identity;
 using Core.Interfaces;
+using Core.Specification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
     public class AccountController : BaseApiController
     {
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
 
-        public AccountController(ITokenService tokenService, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public AccountController(ITokenService tokenService, IMapper mapper, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _tokenService = tokenService;
+            _mapper = mapper;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -32,8 +39,7 @@ namespace API.Controllers
                 return null;
             }
 
-            var user = await _userManager.FindByNameAsync(email);
-            return user;
+            return await _userManager.FindByEmailAsync(email);
         }
 
         [HttpGet("emailexists")]
@@ -120,6 +126,53 @@ namespace API.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [HttpGet("allusers")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> GetUsers([FromQuery] UserSpecParams userSpecParams)
+        {
+            var totalItems = await _userManager.Users.CountAsync();
+
+            if (totalItems == 0) return Ok(new PagedList<UserDto>(new List<UserDto>(), 0, userSpecParams.PageIndex, userSpecParams.PageSize));
+
+            var users = await _userManager.Users
+            .Skip((userSpecParams.PageIndex - 1) * userSpecParams.PageSize)
+            .Take(userSpecParams.PageSize)
+            .ToListAsync();
+
+            var data = _mapper.Map<IReadOnlyList<UserDto>>(users);
+
+            var paginatedUsers = new PagedList<UserDto>(
+                data.ToList(),
+                totalItems,
+                userSpecParams.PageIndex,
+                userSpecParams.PageSize
+            );
+
+            Response.AddPaginationHeader(paginatedUsers.MetaData);
+
+            return Ok(paginatedUsers);
+        }
+
+        [HttpGet("profile")]
+        [Authorize]
+        public async Task<ActionResult<UserDto>> GetUserProfile()
+        {
+            var user = await GetAuthenticatedUserAsync();
+
+            if (user == null)
+                return Unauthorized(new ApiResponse(401, "User not authenticated or not found"));
+
+            return Ok(new
+            {
+                user.FirstName,
+                user.LastName,
+                user.UserName,
+                user.Email,
+                Roles = User.FindFirstValue(ClaimTypes.Role)
+            });
+
         }
     }
 }

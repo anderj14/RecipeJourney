@@ -209,7 +209,7 @@ namespace Infrastructure.Data.Migrations
                     Rating = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     RecipeId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
                     AppUserId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -302,8 +302,8 @@ namespace Infrastructure.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "1c899d50-25b7-40e1-b403-f47d33dd0810", null, "Admin", "ADMIN" },
-                    { "cf6e0f84-85da-4523-be78-b3f46087dab9", null, "Member", "MEMBER" }
+                    { "4860636d-8a75-4529-90da-56c43af770c7", null, "Member", "MEMBER" },
+                    { "b00e67de-5c05-41f6-8d43-e76a01b1b22a", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(

@@ -17,13 +17,15 @@ namespace API.Controllers
         private readonly IGenericRepository<Recipe> _recipeRepo;
         private readonly IGenericRepository<Ingredient> _ingredientRepo;
         private readonly IGenericRepository<Instruction> _instructionRepo;
+        private readonly IGenericRepository<Comment> _commentRepo;
         private readonly IMapper _mapper;
 
-        public RecipesController(IGenericRepository<Recipe> recipeRepo, IGenericRepository<Ingredient> ingredientRepo, IGenericRepository<Instruction> instructionRepo, IMapper mapper)
+        public RecipesController(IGenericRepository<Recipe> recipeRepo, IGenericRepository<Ingredient> ingredientRepo, IGenericRepository<Instruction> instructionRepo, IGenericRepository<Comment> commentRepo, IMapper mapper)
         {
             _recipeRepo = recipeRepo;
             _ingredientRepo = ingredientRepo;
             _instructionRepo = instructionRepo;
+            _commentRepo = commentRepo;
             _mapper = mapper;
         }
 
@@ -111,6 +113,22 @@ namespace API.Controllers
             return Ok(data);
         }
 
+        [HttpGet("{recipeId}/comments")]
+        public async Task<ActionResult<CommentDto>> GetCommentsByRecipeId(int recipeId)
+        {
+            var recipeSpec = new RecipeSpecification(recipeId);
+            var recipe = await _recipeRepo.GetEntityWithSpecAsync(recipeSpec);
+
+            if (recipe == null) return NotFound(new ApiResponse(404, "Recipe Not Found!"));
+
+            var spec = new CommentSpecification(recipeId, getByRecipeId: true);
+            var comments = await _commentRepo.ListWithSpecAsync(spec);
+
+            var data = _mapper.Map<IReadOnlyList<CommentDto>>(comments);
+
+            return Ok(data);
+        }
+
         [HttpPost]
         public async Task<ActionResult> CreateRecipe([FromBody] CreateRecipeDto createRecipeDto)
         {
@@ -119,9 +137,8 @@ namespace API.Controllers
             {
                 var createRecipe = _mapper.Map<Recipe>(createRecipeDto);
 
-                _recipeRepo.Create(createRecipe);
+                await _recipeRepo.Create(createRecipe);
                 createRecipe.CreatedDate = DateTime.Now;
-                await _recipeRepo.SaveAsync();
 
                 return CreatedAtAction(nameof(GetRecipe), new { id = createRecipe.Id }, createRecipe);
             }
@@ -144,8 +161,7 @@ namespace API.Controllers
 
                 _mapper.Map(updateRecipeDto, existingRecipe);
 
-                _recipeRepo.Update(existingRecipe);
-                existingRecipe.CreatedDate = DateTime.Now;
+                await _recipeRepo.Update(existingRecipe);
 
                 await _recipeRepo.SaveAsync();
 
@@ -168,8 +184,7 @@ namespace API.Controllers
 
             if (existingRecipe == null) return NotFound(new ApiResponse(404, "Recipe Not Found"));
 
-            _recipeRepo.Delete(existingRecipe);
-            await _recipeRepo.SaveAsync();
+            await _recipeRepo.Delete(existingRecipe);
 
             return NoContent();
         }
